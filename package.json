@@ -1,0 +1,36 @@
+{
+  "name": "react-native-make-it-rain",
+  "version": "0.9.0",
+  "main": "makeItRain.js",
+  "author": "Peace Chen",
+  "license": "MIT",
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peacechen/react-native-make-it-rain.git"
+  },
+  "bugs": {
+    "url": "https://github.com/peacechen/react-native-make-it-rain/issues"
+  },
+  "homepage": "https://github.com/peacechen/react-native-make-it-rain#readme",
+  "keywords": [
+    "react native",
+    "react native make it rain",
+    "react-native-make-it-rain",
+    "Make It Rain",
+    "animatable",
+    "money"
+  ],
+  "devDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "dependencies": {
+    "react-native-animatable": "*",
+    "react-native-svg": "*"
+  },
+  "peerDependencies": {
+  }
+}

@@ -42,6 +42,10 @@ class Demo extends Component {
 | **`wiggleRoom`**               | How much the money can move horizontally.            | Integer  | 50         |
 | **`speed`**                    | How fast the money falls                             | Integer  | 50         |
 
+
+## Credits
+Cash SVG was sourced from [IconFinder](https://www.iconfinder.com/icons/1889190/currency_currency_exchange_dollar_euro_exchange_finance_money_icon) and is used under the Creative Commons license.
+
 ## ToDo
 *   Example project.
 *   Conditional usage of react-native-svg (so that it's not needed by the consuming app if a custom moneyComponent is supplied).

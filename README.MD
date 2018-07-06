@@ -2,6 +2,8 @@
 
 *Make It Rain* was adapted from Joel Arvidsson's [MakeItRain example](https://github.com/oblador/react-native-animatable/tree/master/Examples/MakeItRain).  This is a self-contained component that may be placed in any component.  It takes up the entire parent view and is positioned absolutely, overlaying on top of other content in the parent.
 
+<img src="https://media.giphy.com/media/5sYvOSluvnVY7CD6vq/giphy.gif" width="204" height="266" />
+
 ```jsx
 import React, {Component} from 'react';
 import { View } from 'react-native';
@@ -41,7 +43,6 @@ class Demo extends Component {
 | **`speed`**                    | How fast the money falls                             | Integer  | 50         |
 
 ## ToDo
-*   Preview image.
 *   Example project.
 *   Conditional usage of react-native-svg (so that it's not needed by the consuming app if a custom moneyComponent is supplied).
 *   Tests

@@ -19,6 +19,7 @@ import {
   Stop
 } from 'react-native-svg';
 
+// Note: This SVG is offset to the right which prevents the tint overlay from aligning properly.
 export default function CashMoney(props) {
   return (
     <Svg height="64px" id="Layer_1" width="64px" version="1.1" viewBox="0 0 64 64" xmlSpace="preserve"  {...props}>

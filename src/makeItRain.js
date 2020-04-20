@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import { View, StyleSheet } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import CashMoney from './assets/cashMoney';
 
 const randomize = max => Math.random() * max;
 
@@ -20,15 +19,31 @@ class MakeItRain extends Component {
     this.state = {
       containerWidth: 0,
       containerHeight: 0,
+      iterationCount: props.continuous ? "infinite" : 1,
+      flipDuration: 9000 / props.flipSpeed,
+      swingDuration: 35000 / props.horizSpeed,
+      fallDuration: 150000 / props.fallSpeed,
     };
   }
 
-  FlippingView = ({ back = false, delay, duration = 1000, moneyComponent, style = {} }) => {
-    _moneyComponent = moneyComponent;
-    if (!moneyComponent) {
-      // Need to size width & height, so create component here with props passed through.
-      _moneyComponent = <CashMoney width={this.props.moneyDimensions.width} height={this.props.moneyDimensions.height}/>
+  componentDidUpdate(prevProps) {
+    if (prevProps.flipSpeed !== this.props.flipSpeed ||
+        prevProps.horizSpeed !== this.props.horizSpeed ||
+        prevProps.fallDuration !== this.props.fallDuration ||
+        prevProps.continuous !== this.props.continuous )
+    {
+      this.setState({
+        iterationCount: this.props.continuous ? "infinite" : 1,
+        flipDuration: 9000 / this.props.flipSpeed,
+        swingDuration: 35000 / this.props.horizSpeed,
+        fallDuration: 150000 / this.props.fallSpeed,
+      });
     }
+  }
+
+  FlippingView = ({ back = false, delay, duration = 1000, itemComponent, style = {}, index }) => {
+    const backgroundColor = this.props.itemColors[index % this.props.itemColors.length];
+
     return (
       <Animatable.View
         animation={{
@@ -40,12 +55,14 @@ class MakeItRain extends Component {
         easing="linear"
         iterationCount="infinite"
         useNativeDriver
-        style={{
-          ...style,
-          backfaceVisibility: 'hidden',
-        }}
+        style={[
+          styles.itemContainer,
+          style,
+          { backfaceVisibility: 'hidden' },
+        ]}
       >
-        {_moneyComponent}
+        {itemComponent}
+        <View style={[styles.itemTintContainer, {backgroundColor}, this.props.itemDimensions]} opacity={this.props.itemTintStrength} />
       </Animatable.View>
     );
   }
@@ -83,13 +100,13 @@ class MakeItRain extends Component {
   Falling = ({ duration, delay, style, children }) => (
     <Animatable.View
       animation={{
-        from: { translateY: -this.props.moneyDimensions.height - this.props.speed },
-        to: { translateY: this.state.containerHeight + this.props.speed },
+        from: { translateY: -this.props.itemDimensions.height },
+        to: { translateY: this.state.containerHeight + this.props.itemDimensions.height },
       }}
       duration={duration}
       delay={delay}
       easing={t => Math.pow(t, 1.7)}
-      iterationCount="infinite"
+      iterationCount={this.state.iterationCount}
       useNativeDriver
       style={style}
     >
@@ -105,31 +122,34 @@ class MakeItRain extends Component {
   });
 
   render() {
-    let Falling = this.Falling;
-    let Swinging = this.Swinging;
-    let FlippingView = this.FlippingView;
+    const Falling = this.Falling;
+    const Swinging = this.Swinging;
+    const FlippingView = this.FlippingView;
+
     return (
       <View style={styles.container} onLayout={this.onLayout} pointerEvents="none">
-        {range(this.props.numMoneys)
+        {range(this.props.numItems)
           .map(i => randomize(1000))
           .map((flipDelay, i) => (
             <Falling
               key={i}
-              duration={this.props.duration}
-              delay={i * (this.props.duration / this.props.numMoneys)}
+              duration={this.state.fallDuration}
+              delay={i * this.state.fallDuration / this.props.numItems}
               style={{
                 position: 'absolute',
                 paddingHorizontal: this.props.wiggleRoom,
-                left: randomize(this.state.containerWidth - this.props.moneyDimensions.width) - this.props.wiggleRoom,
+                left: randomize(this.state.containerWidth - this.props.itemDimensions.width) - this.props.wiggleRoom,
               }}
             >
-              <Swinging amplitude={this.props.moneyDimensions.width / 5} delay={randomize(this.props.duration)}>
-                <FlippingView moneyComponent={this.props.moneyComponent} delay={flipDelay} />
+              <Swinging amplitude={this.props.itemDimensions.width / 5} delay={randomize(this.state.swingDuration)} duration={this.state.swingDuration}>
+                <FlippingView itemComponent={this.props.itemComponent} delay={flipDelay} duration={this.state.flipDuration} index={i}/>
                 <FlippingView
-                  moneyComponent={this.props.moneyComponent}
+                  itemComponent={this.props.itemComponent}
                   delay={flipDelay}
+                  duration={this.state.flipDuration}
                   back
                   style={{ position: 'absolute' }}
+                  index={i}
                 />
               </Swinging>
             </Falling>
@@ -137,14 +157,6 @@ class MakeItRain extends Component {
       </View>
     );
   }
-}
-
-MakeItRain.defaultProps = {
-  numMoneys: 15,
-  duration: 3000,
-  moneyDimensions: { width: 100, height: 50 },
-  wiggleRoom: 50,
-  speed: 50,
 }
 
 export default MakeItRain;
@@ -158,5 +170,15 @@ let styles = StyleSheet.create( {
     bottom: 0,
     left: 0,
     right: 0
-  }
+  },
+  itemContainer: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden',
+  },
+  itemTintContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+  },
 });

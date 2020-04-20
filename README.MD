@@ -1,12 +1,29 @@
 # React Native "Make It Rain"
 
-*Make It Rain* was adapted from Joel Arvidsson's [MakeItRain example](https://github.com/oblador/react-native-animatable/tree/master/Examples/MakeItRain).  This is a self-contained component that may be placed in any component.  It takes up the entire parent view and is positioned absolutely, overlaying on top of other content in the parent.
+### v1.0.0 breaking changes
+[Prop names](#props) have been generalized to represent any type of component can be passed in as the falling pieces.
+The `moneyComponent` no longer defaults to an SVG.  This allowed for removal of the dependency on `react-native-svg`.  Refer to the Example project for how to pass in an SVG `moneyComponent`.
+
+
+## Summary
+
+This is a self-contained component that may be placed in any component.  It takes up the entire parent view and is positioned absolutely, overlaying on top of other content in the parent.
+
+The default animation was adapted from [Shopify's Arrive confetti example](https://engineering.shopify.com/blogs/engineering/building-arrives-confetti-in-react-native-with-reanimated).
+
+[![Arrive](https://img.youtube.com/vi/Le8HyE4wwJs/0.jpg)](https://www.youtube.com/watch?v=Le8HyE4wwJs)
+
+The original *Make It Rain* animation was adapted from Joel Arvidsson's [MakeItRain example](https://github.com/oblador/react-native-animatable/tree/master/Examples/MakeItRain).
 
 <img src="https://media.giphy.com/media/5sYvOSluvnVY7CD6vq/giphy.gif" width="204" height="266" />
 
+The `flavor` [prop](#props) selects between them.
+
+
+## Sample Code
 ```jsx
 import React, {Component} from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import MakeItRain from 'react-native-make-it-rain';
 
 class Demo extends Component {
@@ -15,8 +32,10 @@ class Demo extends Component {
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text>Make It Rain</Text>
         <MakeItRain
-          numMoneys={10}
-          moneyDimensions={{width: 200, height: 100}}
+          numItems={80}
+          itemDimensions={{width: 40, height: 20}}
+          itemComponent={<Text>🤍</Text>}
+          itemTintStrength={0.8}
         />
       </View>
     );
@@ -28,25 +47,44 @@ class Demo extends Component {
 
 *   `npm install react-native-make-it-rain --save`
 
-## Dependencies
-*   [react-native-animatable](https://github.com/oblador/react-native-animatable)
-*   [react-native-svg](https://github.com/react-native-community/react-native-svg)
-
 ## Props
 | Prop                           | Description                                          | Type     | Default    |
 | ------------------------------ | ---------------------------------------------------- | -------- | ---------- |
-| **`numMoneys`**                | How much money falls                                 | Integer  | 15         |
-| **`duration`**                 | Money flip duration                                  | Integer  | 3000       |
-| **`moneyComponent`**           | Replaces the built-in money component. Can use any React component (Icon, Image, View, etc)  | Component | `CashMoney SVG` |
-| **`moneyDimensions`**          | Size of money. If `moneyComponent` is supplied, size should be set to match            | Object    | `{ width: 100, height: 50 }` |
-| **`wiggleRoom`**               | How much the money can move horizontally.            | Integer  | 50         |
-| **`speed`**                    | How fast the money falls                             | Integer  | 50         |
+| **`numItems`**                 | How many items fall                                  | Integer  | 100        |
+| **`itemComponent`**            | Replaces the built-in item component. Can use any React component (Icon, Image, View, SVG etc)  | Component | `<View/>` |
+| **`itemDimensions`**           | Size of item. If `itemComponent` is supplied, size should be set to match. | Object    | `{ width: 20, height: 10 }` |
+| **`itemColors`**               | Colors of falling items.                             | Array    | ['#00e4b2', '#09aec5', '#107ed5'] |
+| **`itemTintStrength`**         | Opacity of color overlay on item (0 - 1.0)           | Number   | 1.0        |
+| **`flavor`**                   | The animation behavior ("arrive" or "rain")          | String   | "arrive"   |
+| **`fallSpeed`**                | How fast the item falls                              | Integer  | 50         |
+| **`flipSpeed`**                | Item flip speed                                      | Integer  | 3          |
+| **`horizSpeed`**               | How fast the item moves horizontally                 | Integer  | 50         |
+| **`wiggleRoom`**               | How much the item can move horizontally (only for "rain") | Integer  | 50         |
+| **`continuous`**               | Rain down continuously                               | Boolean  | true       |
+
+
+# Sample Application
+
+If you'd like to see it in action, run these commands:
+```sh
+cd Example
+npm run cp
+npm install
+npm start
+```
+
+The sample app is an Expo project created with `create-react-native-app`.
+
+## Development
+
+The source files are copied from the project root directory into `Example/react-native-make-it-rain` using `npm run cp`.  If a source file is modified, it must be copied over again with `npm run cp`.
+
+Ideally the Example project could include the parent's source files using package.json, but that causes a babel interopRequireDefault runtime error.
 
 
 ## Credits
-Cash SVG was sourced from [IconFinder](https://www.iconfinder.com/icons/1889190/currency_currency_exchange_dollar_euro_exchange_finance_money_icon) and is used under the Creative Commons license.
+Cash SVG in the Example project was sourced from [IconFinder](https://www.iconfinder.com/icons/1889190/currency_currency_exchange_dollar_euro_exchange_finance_money_icon) and is used under the Creative Commons license.
 
 ## ToDo
-*   Example project.
-*   Conditional usage of react-native-svg (so that it's not needed by the consuming app if a custom moneyComponent is supplied).
 *   Tests
+*   Refactor the original MakeItRain to use hooks and react-native-reanimated.

@@ -25,7 +25,6 @@ Root.defaultProps = {
   fallSpeed: 50,
   flipSpeed: 3,
   horizSpeed: 50,
-  wiggleRoom: 50,
   continuous: true,
 };
 

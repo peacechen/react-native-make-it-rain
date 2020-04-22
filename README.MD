@@ -1,21 +1,42 @@
 # React Native "Make It Rain"
 
+<div align="center">
+  <a href="https://npmjs.org/package/react-native-make-it-rain">
+    <img src="https://img.shields.io/npm/v/react-native-make-it-rain.svg?style=flat-square" alt="npm package version" />
+  </a>
+  <a href="https://npmjs.org/package/react-native-make-it-rain">
+  <img src="https://img.shields.io/npm/dm/react-native-make-it-rain.svg?style=flat-square" alt="npm downloads" />
+  </a>
+  <a href="https://github.com/peacechen/react-native-make-it-rain/blob/master/LICENSE.md">
+    <img src="https://img.shields.io/npm/l/react-native-make-it-rain.svg?style=flat-square" alt="project license" />
+  </a>
+  <a href="http://makeapullrequest.com">
+    <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square" alt="make a pull request" />
+  </a>
+</div>
+<br>
+<div align="center">
+  <a href="https://twitter.com/intent/tweet?text=Check%20out%20react-native-make-it-rain!%20https://github.com/peacechen/react-native-make-it-rain%20%F0%9F%91%8D">
+    <img src="https://img.shields.io/twitter/url/https/github.com/peacechen/react-native-make-it-rain.svg?style=social" alt="Tweet" />
+  </a>
+</div>
+
 ### v1.0.0 breaking changes
 [Prop names](#props) have been generalized to represent that any type of component can be passed in as the falling pieces.
-The `itemComponent` (previously `moneyComponent`) no longer defaults to an SVG.  This allowed for removal of the dependency on `react-native-svg`.  Refer to the Example project for how to pass in an SVG `moneyComponent`.
+The `itemComponent` (previously `moneyComponent`) no longer defaults to an SVG.  This allowed for removal of the dependency on `react-native-svg`.  Refer to the Example project for how to pass in an SVG `itemComponent`.
 
 
 ## Summary
 
-This is a self-contained component that may be placed in any component.  It takes up the entire parent view and is positioned absolutely, overlaying on top of other content in the parent.
+This is a self-contained component that may be placed in any component.  It takes up the entire parent view and is positioned absolutely, overlaying other content in the parent.
 
 The default animation was adapted from [Shopify's Arrive confetti example](https://engineering.shopify.com/blogs/engineering/building-arrives-confetti-in-react-native-with-reanimated).
 
-<img src="https://user-images.githubusercontent.com/6295083/79950404-acc95000-843c-11ea-8d38-77325a902a53.gif" width="320" height="540" />
+<kbd><img src="https://user-images.githubusercontent.com/6295083/79950404-acc95000-843c-11ea-8d38-77325a902a53.gif" width="320" height="540" /></kbd>
 
 The original *Make It Rain* animation was adapted from Joel Arvidsson's [MakeItRain example](https://github.com/oblador/react-native-animatable/tree/master/Examples/MakeItRain).  It has been rewritten to use `react-native-reanimated`.
 
-<img src="https://user-images.githubusercontent.com/6295083/42412963-745e701a-81dc-11e8-9a98-399199df7ccf.gif" width="320" height="400" />
+<kbd><img src="https://user-images.githubusercontent.com/6295083/42412963-745e701a-81dc-11e8-9a98-399199df7ccf.gif" width="320" height="400" /></kbd>
 
 The `flavor` [prop](#props) selects between them.
 
@@ -59,7 +80,6 @@ class Demo extends Component {
 | **`fallSpeed`**                | How fast the item falls                              | Integer  | 50         |
 | **`flipSpeed`**                | Item flip speed                                      | Integer  | 3          |
 | **`horizSpeed`**               | How fast the item moves horizontally                 | Integer  | 50         |
-| **`wiggleRoom`**               | How much the item can move horizontally (only for "rain") | Integer  | 50         |
 | **`continuous`**               | Rain down continuously                               | Boolean  | true       |
 
 

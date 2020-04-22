@@ -1,6 +1,6 @@
 {
   "name": "react-native-make-it-rain",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "main": "src/index.js",
   "author": "Peace Chen",
   "license": "MIT",
@@ -20,8 +20,8 @@
     "react native make it rain",
     "react-native-make-it-rain",
     "Make It Rain",
-    "animatable",
     "confetti",
+    "rain",
     "money"
   ],
   "devDependencies": {
@@ -29,7 +29,6 @@
     "react-native": ">=0.60.0"
   },
   "dependencies": {
-    "react-native-animatable": "*",
     "react-native-reanimated": "^1.8.0"
   },
   "peerDependencies": {}

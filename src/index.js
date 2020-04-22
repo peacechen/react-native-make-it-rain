@@ -1,16 +1,19 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, Text } from 'react-native';
 import MakeItRain from './makeItRain';
 import Confetti from './confetti';
 
 function Root(props) {
   const itemComponent = props.itemComponent || <View style={props.itemDimensions}/>;
 
-  return ( props.flavor === "arrive" ?
-    <Confetti {...props} itemComponent={itemComponent}/>
-    :
-    <MakeItRain {...props} itemComponent={itemComponent}/>
-  );
+  switch (props.flavor) {
+    case "arrive":
+      return ( <Confetti {...props} itemComponent={itemComponent}/> );
+    case "rain":
+      return ( <MakeItRain {...props} itemComponent={itemComponent}/> );
+    default:
+      return ( <Text>Unsupported flavor</Text> );
+  }
 }
 
 Root.defaultProps = {

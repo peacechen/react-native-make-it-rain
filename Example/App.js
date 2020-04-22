@@ -18,7 +18,7 @@ export default function App() {
         />
         :
         <MakeItRain
-          numItems={25}
+          numItems={50}
           itemDimensions={{width: 200, height: 100}}
           itemComponent={<CashMoney width={200} height={100}/>}
           itemColors={['#ffffff00']}

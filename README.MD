@@ -1,8 +1,8 @@
 # React Native "Make It Rain"
 
 ### v1.0.0 breaking changes
-[Prop names](#props) have been generalized to represent any type of component can be passed in as the falling pieces.
-The `moneyComponent` no longer defaults to an SVG.  This allowed for removal of the dependency on `react-native-svg`.  Refer to the Example project for how to pass in an SVG `moneyComponent`.
+[Prop names](#props) have been generalized to represent that any type of component can be passed in as the falling pieces.
+The `itemComponent` (previously `moneyComponent`) no longer defaults to an SVG.  This allowed for removal of the dependency on `react-native-svg`.  Refer to the Example project for how to pass in an SVG `moneyComponent`.
 
 
 ## Summary
@@ -11,11 +11,11 @@ This is a self-contained component that may be placed in any component.  It take
 
 The default animation was adapted from [Shopify's Arrive confetti example](https://engineering.shopify.com/blogs/engineering/building-arrives-confetti-in-react-native-with-reanimated).
 
-[![Arrive](https://img.youtube.com/vi/Le8HyE4wwJs/0.jpg)](https://www.youtube.com/watch?v=Le8HyE4wwJs)
+<img src="https://user-images.githubusercontent.com/6295083/79950404-acc95000-843c-11ea-8d38-77325a902a53.gif" width="320" height="540" />
 
-The original *Make It Rain* animation was adapted from Joel Arvidsson's [MakeItRain example](https://github.com/oblador/react-native-animatable/tree/master/Examples/MakeItRain).
+The original *Make It Rain* animation was adapted from Joel Arvidsson's [MakeItRain example](https://github.com/oblador/react-native-animatable/tree/master/Examples/MakeItRain).  It has been rewritten to use `react-native-reanimated`.
 
-<img src="https://media.giphy.com/media/5sYvOSluvnVY7CD6vq/giphy.gif" width="204" height="266" />
+<img src="https://user-images.githubusercontent.com/6295083/42412963-745e701a-81dc-11e8-9a98-399199df7ccf.gif" width="320" height="400" />
 
 The `flavor` [prop](#props) selects between them.
 
@@ -45,7 +45,7 @@ class Demo extends Component {
 
 ## Usage
 
-*   `npm install react-native-make-it-rain --save`
+> npm install react-native-make-it-rain --save
 
 ## Props
 | Prop                           | Description                                          | Type     | Default    |
@@ -87,4 +87,3 @@ Cash SVG in the Example project was sourced from [IconFinder](https://www.iconfi
 
 ## ToDo
 *   Tests
-*   Refactor the original MakeItRain to use hooks and react-native-reanimated.

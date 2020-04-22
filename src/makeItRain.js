@@ -1,184 +1,197 @@
-import React, {Component} from 'react';
-import { View, StyleSheet } from 'react-native';
-import * as Animatable from 'react-native-animatable';
+// Spring physics from https://blog.swmansion.com/simple-physics-with-reanimated-part-3-a168d69faa51
 
-const randomize = max => Math.random() * max;
+import React, { useEffect, useMemo } from 'react'
+import Animated from 'react-native-reanimated'
+import {View, Dimensions, StyleSheet} from 'react-native'
 
-const range = count => {
-  const array = [];
-  for (let i = 0; i < count; i++) {
-    array.push(i);
-  }
-  return array;
-};
+const {
+  View: ReanimatedView,
+  Clock,
+  Value,
+  useCode,
+  block,
+  startClock,
+  stopClock,
+  set,
+  abs,
+  add,
+  sub,
+  divide,
+  diff,
+  multiply,
+  cond,
+  clockRunning,
+  greaterThan,
+  lessThan,
+  lessOrEq,
+  eq,
+} = Animated;
 
-class MakeItRain extends Component {
-  constructor(props) {
-    super(props)
+const randomize = (max, base = 0) => Math.random() * max + base;
 
-    this.state = {
-      containerWidth: 0,
-      containerHeight: 0,
-      iterationCount: props.continuous ? "infinite" : 1,
-      flipDuration: 9000 / props.flipSpeed,
-      swingDuration: 35000 / props.horizSpeed,
-      fallDuration: 150000 / props.fallSpeed,
-    };
-  }
+const MakeItRain = props => {
+  const [containerDims, setContainerDims] = React.useState(Dimensions.get('screen'));
+  const [items, setItems] = React.useState(createItems(containerDims));
+  const clock = new Clock();
 
-  componentDidUpdate(prevProps) {
-    if (prevProps.flipSpeed !== this.props.flipSpeed ||
-        prevProps.horizSpeed !== this.props.horizSpeed ||
-        prevProps.fallDuration !== this.props.fallDuration ||
-        prevProps.continuous !== this.props.continuous )
-    {
-      this.setState({
-        iterationCount: this.props.continuous ? "infinite" : 1,
-        flipDuration: 9000 / this.props.flipSpeed,
-        swingDuration: 35000 / this.props.horizSpeed,
-        fallDuration: 150000 / this.props.fallSpeed,
-      });
+  useEffect(() => {
+    return () => { // func indicates unmount
+      stopClock(clock);
+      setItems([]);
     }
-  }
+  }, []);
 
-  FlippingView = ({ back = false, delay, duration = 1000, itemComponent, style = {}, index }) => {
-    const backgroundColor = this.props.itemColors[index % this.props.itemColors.length];
-
-    return (
-      <Animatable.View
-        animation={{
-          from: { rotateX: back ? '0deg' : '180deg', rotate: !back ? '180deg' : '0deg' },
-          to: { rotateX: back ? '360deg' : '-180deg', rotate: !back ? '180deg' : '0deg' },
-        }}
-        duration={duration}
-        delay={delay}
-        easing="linear"
-        iterationCount="infinite"
-        useNativeDriver
-        style={[
-          styles.itemContainer,
-          style,
-          { backfaceVisibility: 'hidden' },
-        ]}
-      >
-        {itemComponent}
-        <View style={[styles.itemTintContainer, {backgroundColor}, this.props.itemDimensions]} opacity={this.props.itemTintStrength} />
-      </Animatable.View>
-    );
-  }
-
-  Swinging = ({ amplitude, rotation = 7, delay, duration = 700, children }) => (
-    <Animatable.View
-      animation={{
-        0: {
-          translateX: -amplitude,
-          translateY: -amplitude * 0.8,
-          rotate: `${rotation}deg`,
-        },
-        0.5: {
-          translateX: 0,
-          translateY: 0,
-          rotate: '0deg',
-        },
-        1: {
-          translateX: amplitude,
-          translateY: -amplitude * 0.8,
-          rotate: `${-rotation}deg`,
-        },
-      }}
-      delay={delay}
-      duration={duration}
-      direction="alternate"
-      easing="ease-in-out"
-      iterationCount="infinite"
-      useNativeDriver
-    >
-      {children}
-    </Animatable.View>
-  );
-
-  Falling = ({ duration, delay, style, children }) => (
-    <Animatable.View
-      animation={{
-        from: { translateY: -this.props.itemDimensions.height },
-        to: { translateY: this.state.containerHeight + this.props.itemDimensions.height },
-      }}
-      duration={duration}
-      delay={delay}
-      easing={t => Math.pow(t, 1.7)}
-      iterationCount={this.state.iterationCount}
-      useNativeDriver
-      style={style}
-    >
-      {children}
-    </Animatable.View>
-  );
-
-  onLayout = (event => {
-    this.setState({
-      containerWidth: event.nativeEvent.layout.width,
-      containerHeight: event.nativeEvent.layout.height,
-    })
+  // Update item positioning if screen changes (e.g. rotation)
+  const onLayout = (event => {
+    setContainerDims({
+      width: event.nativeEvent.layout.width,
+      height: event.nativeEvent.layout.height,
+    });
   });
 
-  render() {
-    const Falling = this.Falling;
-    const Swinging = this.Swinging;
-    const FlippingView = this.FlippingView;
+  function createItems(dimensions) {
+    return useMemo(() => {
+      const { width, height } = dimensions;
+      // Adapt velocity props
+      const xVelMax = props.horizSpeed;
+      const yVelMax = props.fallSpeed * 3;
+      const angleVelMax = props.flipSpeed;
 
-    return (
-      <View style={styles.container} onLayout={this.onLayout} pointerEvents="none">
-        {range(this.props.numItems)
-          .map(i => randomize(1000))
-          .map((flipDelay, i) => (
-            <Falling
-              key={i}
-              duration={this.state.fallDuration}
-              delay={i * this.state.fallDuration / this.props.numItems}
-              style={{
-                position: 'absolute',
-                paddingHorizontal: this.props.wiggleRoom,
-                left: randomize(this.state.containerWidth - this.props.itemDimensions.width) - this.props.wiggleRoom,
-              }}
-            >
-              <Swinging amplitude={this.props.itemDimensions.width / 5} delay={randomize(this.state.swingDuration)} duration={this.state.swingDuration}>
-                <FlippingView itemComponent={this.props.itemComponent} delay={flipDelay} duration={this.state.flipDuration} index={i}/>
-                <FlippingView
-                  itemComponent={this.props.itemComponent}
-                  delay={flipDelay}
-                  duration={this.state.flipDuration}
-                  back
-                  style={{ position: 'absolute' }}
-                  index={i}
-                />
-              </Swinging>
-            </Falling>
-          ))}
-      </View>
-    );
+      return [...new Array(props.numItems)].map((_, index) => {
+        let x = randomize(width - props.itemDimensions.width);
+        let y = -props.itemDimensions.height * 4;
+        let anchor = randomize(width / 3, width / 12);
+        let xArc = Math.abs(x - anchor);
+
+        return {
+          index,
+          x: new Value(x),
+          y: new Value(y),
+          xArc: new Value(xArc),
+          yBase: new Value(y),
+          angle: new Value(0),
+          anchor: new Value(anchor),
+          tension: new Value(4 * Math.min(xArc, width/2) / width),
+          xVel: new Value(randomize(xVelMax / 2, xVelMax / 2)),
+          yVel: new Value(randomize(yVelMax, yVelMax)),
+          angleVel: new Value(randomize(angleVelMax / 2, angleVelMax / 2)),
+          delay: new Value((index / props.numItems) * height / yVelMax),
+          color: props.itemColors[index % props.itemColors.length],
+        }
+      });
+    }, [dimensions]);
   }
+
+  const spring = (dt, position, velocity, anchor, tension = 50, mass = 1 ) => {
+    const dist = sub(position, anchor);
+    const acc = divide(multiply(-1, tension, dist), mass);
+    return set(velocity, add(velocity, multiply(dt, acc)));
+  }
+
+  const swingArc = (x, y, xArc, yBase, anchor ) => {
+    const percentArc = divide(abs(sub(x, anchor)), xArc);
+    const yOffset = multiply(percentArc, divide(xArc, 4));
+    return set(y, sub(yBase, yOffset));
+  }
+
+  const useDraw = _items => {
+    const nativeCode = useMemo(() => {
+      const timeDiff = diff(clock);
+      const nativeCode = _items.map(({
+        x,
+        y,
+        xArc,
+        yBase,
+        angle,
+        xVel,
+        yVel,
+        angleVel,
+        color,
+        anchor,
+        tension,
+        delay,
+      }) => {
+        const dt = divide(timeDiff, 1000)
+        const dy = multiply(dt, yVel)
+        const dAngle = multiply(dt, angleVel)
+
+        return [
+          cond(
+            lessOrEq(yBase, containerDims.height + props.itemDimensions.height),
+            cond(
+              greaterThan(delay, 0),
+              [set(delay, sub(delay, dt))],
+              [
+                set(yBase, add(yBase, dy)),
+                spring(dt, x, xVel, anchor, tension), // swinging motion
+                set(x, add(x, multiply(xVel, dt))),
+                swingArc(x, y, xArc, yBase, anchor ), // create dip in swing
+                set(angle, add(angle, dAngle)),
+              ]
+            )
+          ),
+          cond(
+            eq(props.continuous, true),
+            cond(
+              greaterThan(yBase, containerDims.height + props.itemDimensions.height),
+              set(yBase, -props.itemDimensions.height * 4),
+            )
+          ),
+        ];
+      });
+
+      nativeCode.push(cond(clockRunning(clock), 0, startClock(clock)), clock);
+      return block(nativeCode);
+    }, [_items]);
+
+    useCode(() => nativeCode, [nativeCode]);
+  };
+
+  useDraw(items);
+
+  return (
+    <View pointerEvents="none" style={StyleSheet.absoluteFill} onLayout={this.onLayout}>
+      {items.map(
+        ({ index, x, y, angle, color: backgroundColor }) => {
+          return (
+            <ReanimatedView
+              key={index}
+              style={[
+                styles.animContainer,
+                props.itemDimensions,
+                { transform: [
+                  {translateX: x},
+                  {translateY: y},
+                  {rotate: angle},
+                  {rotateX: angle},
+                  {rotateY: angle},
+                ]},
+              ]}
+            >
+              { props.itemComponent }
+              <View style={[{ backgroundColor }, props.itemDimensions, styles.itemContainer]} opacity={props.itemTintStrength}/>
+            </ReanimatedView>
+          )
+        }
+      )}
+    </View>
+  )
 }
 
 export default MakeItRain;
 
-
-let styles = StyleSheet.create( {
-	container: {
-    overflow: 'hidden',
+const styles = StyleSheet.create({
+  animContainer: {
     position: 'absolute',
     top: 0,
-    bottom: 0,
     left: 0,
-    right: 0
-  },
-  itemContainer: {
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
   },
-  itemTintContainer: {
+  itemContainer: {
     position: 'absolute',
     top: 0,
     left: 0,
-  },
-});
+  }
+})
